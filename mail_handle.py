@@ -27,23 +27,18 @@ class EmailHandle:
             return False
 
     def batch_send(self, excel_file):
-        sleep_t = random.randint(1, 3)
+        sleep_t = random.random()
         df = pd.read_excel(excel_file)
-        to_mail_list = list(df['邮箱'].values)
-        name_list = list(df['名字'].values)
-        file_list = list(df['文件名'].values)
-        subject_list = list(df['主题'].values)
-        content_list = list(df['内容'].values)
-        for to_mail, subject, content, file, name in zip(to_mail_list, subject_list, content_list, file_list,
-                                                         name_list):
-            if os.path.isfile(file):
-                if self.send_mail(to_mail, subject=subject, content=content, file=file):
-                    print(f'{name} 发送成功')
+        for index, row in df.iterrows():
+            if os.path.isfile(row['文件名']):
+                if self.send_mail(row['邮箱'], subject=row['主题'], content=row['内容'], file=row['文件名']):
+                    print(f'{row["名字"]} 发送成功')
                 else:
-                    print(f'{name} 发送失败')
+                    print(f'{row["名字"]} 发送失败')
             else:
-                print(f'{file} 找不到文件，请确认文件是否存在')
+                print(f'{row["文件名"]} 找不到文件，请确认文件是否存在')
             sleep(sleep_t)
+            print(index, row['名字'])
 
 
 if __name__ == '__main__':
